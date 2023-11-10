@@ -12,4 +12,10 @@ showsRouter.get("/", async (req, res) => {
   res.json(allShows);
 });
 
+showsRouter.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  const showById = await Show.findByPk(id);
+  res.json(showById);
+});
+
 module.exports = showsRouter;
