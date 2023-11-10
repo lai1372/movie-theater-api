@@ -24,4 +24,12 @@ showsRouter.get("/genres/:genre", async (req, res) => {
   res.json(showsByGenre);
 });
 
+showsRouter.patch("/:id", async (req, res) => {
+  const id = req.params.id;
+  const reqBody = req.body;
+  const show = await Show.findByPk(id);
+  const updateRating = await show.update({ rating: reqBody.rating });
+  res.json(show);
+});
+
 module.exports = showsRouter;
