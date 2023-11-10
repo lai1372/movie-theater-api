@@ -18,4 +18,10 @@ showsRouter.get("/:id", async (req, res) => {
   res.json(showById);
 });
 
+showsRouter.get("/genres/:genre", async (req, res) => {
+  const genre = req.params.genre;
+  const showsByGenre = await Show.findAll({ where: { genre: genre } });
+  res.json(showsByGenre);
+});
+
 module.exports = showsRouter;
