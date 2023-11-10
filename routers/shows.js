@@ -32,4 +32,12 @@ showsRouter.patch("/:id", async (req, res) => {
   res.json(show);
 });
 
+showsRouter.delete("/:id", async (req, res) => {
+  const id = req.params.id;
+  const show = await Show.findByPk(id);
+  const name = show.title;
+  const deleted = await show.destroy();
+  res.send(`${name} deleted`);
+});
+
 module.exports = showsRouter;
