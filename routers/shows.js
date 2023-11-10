@@ -3,27 +3,30 @@ const showsRouter = express.Router();
 const { check, validationResult } = require("express-validator");
 const { Show } = require("../models/index");
 
-// CRUD OPERATIONS
 showsRouter.use(express.json());
 showsRouter.use(express.urlencoded({ extended: true }));
 
+// GET ALL
 showsRouter.get("/", async (req, res) => {
   const allShows = await Show.findAll();
   res.json(allShows);
 });
 
+//GET BY ID
 showsRouter.get("/:id", async (req, res) => {
   const id = req.params.id;
   const showById = await Show.findByPk(id);
   res.json(showById);
 });
 
+//GET GENRES
 showsRouter.get("/genres/:genre", async (req, res) => {
   const genre = req.params.genre;
   const showsByGenre = await Show.findAll({ where: { genre: genre } });
   res.json(showsByGenre);
 });
 
+//PATCH RATING
 showsRouter.patch(
   "/:id",
   [check("rating").not().isEmpty()],
@@ -35,12 +38,18 @@ showsRouter.patch(
       const id = req.params.id;
       const reqBody = req.body;
       const show = await Show.findByPk(id);
-      const updateRating = await show.update({ rating: reqBody.rating });
+      if (show.rating === null) {
+        show.update({ rating: reqBody.rating })
+      } else {
+        const newRating = show.rating + reqBody.rating / 2;
+        await show.update({ rating: newRating });
+      }
       res.json(show);
     }
   }
 );
 
+//PATCH UPDATE STATUS
 showsRouter.patch(
   "/:id/updates",
   [
@@ -55,17 +64,18 @@ showsRouter.patch(
       const id = req.params.id;
       const reqBody = req.body;
       const show = await Show.findByPk(id);
-      const updateRating = await show.update({ status: reqBody.status });
+      await show.update({ status: reqBody.status });
       res.json(show);
     }
   }
 );
 
+//DELETE SHOW
 showsRouter.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const show = await Show.findByPk(id);
   const name = show.title;
-  const deleted = await show.destroy();
+  await show.destroy();
   res.send(`${name} deleted`);
 });
 
