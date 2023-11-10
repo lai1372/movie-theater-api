@@ -18,8 +18,6 @@ usersRouter.get("/:id", async (req, res) => {
   res.json(userById);
 });
 
-// where id = x include shows?
-
 usersRouter.get("/:id/shows", async (req, res) => {
   const id = req.params.id;
   const userWithShows = await User.findOne({
@@ -28,5 +26,22 @@ usersRouter.get("/:id/shows", async (req, res) => {
   });
   res.json(userWithShows);
 });
+
+usersRouter.put("/:userid/shows/:showid", async (req, res) => {
+  const userId = req.params.userid;
+  const showId = req.params.showid;
+
+  const userWithShow = await User.findOne({
+    where: { id: userId },
+    include: Show,
+  });
+
+  const show = await Show.findByPk(showId);
+
+  await userWithShow.addShow(show);
+
+  res.json(userWithShow);
+});
+
 
 module.exports = usersRouter;
