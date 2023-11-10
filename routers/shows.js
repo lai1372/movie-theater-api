@@ -32,6 +32,14 @@ showsRouter.patch("/:id", async (req, res) => {
   res.json(show);
 });
 
+showsRouter.patch("/:id/updates", async (req, res) => {
+  const id = req.params.id;
+  const reqBody = req.body;
+  const show = await Show.findByPk(id);
+  const updateRating = await show.update({ status: reqBody.status });
+  res.json(show);
+});
+
 showsRouter.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const show = await Show.findByPk(id);
